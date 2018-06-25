@@ -3,12 +3,30 @@ body {
     background-size: cover;
     background-repeat: no-repeat;
 }
+
 header {
     background-color: antiquewhite;
 }
-header h1 {
-    padding: 15px;
-}
-#options {
 
+header h1 {
+    padding: 15px 0;
+}
+
+#options, #question-box {
+    border: 2px solid #444;
+    background-color: #999;
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+
+#options {
+    width: 300px;
+}
+
+#options button {
+    margin-top: 15px;
+}
+
+#type {
+    margin-bottom: 15px;
 }

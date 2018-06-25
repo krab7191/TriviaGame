@@ -20,51 +20,60 @@
             Trivia Challenge
         </h1>
     </header>
-    <div id="options" class="row mx-auto">
-        <div class="col-md-12 text-center">
-            <button class="btn btn success">Reset</button>
-        </div>
-        <div class="dropdown col-md-12 text-center">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-                Difficulty
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" href="#">Easy</a>
-                <a class="dropdown-item" href="#">Medium</a>
-                <a class="dropdown-item" href="#">Hard</a>
+    <div class="container">
+        <div id="options" class="row mx-auto">
+            <div class="col-md-12 text-center">
+                <button class="btn btn success">Reset</button>
+            </div>
+            <div class="dropdown col-md-12 text-center">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="difficultyDropdown" data-toggle="dropdown" aria-haspopup="true"
+                    aria-expanded="false">
+                    Difficulty
+                </button>
+                <div class="dropdown-menu" aria-labelledby="difficultyDropdown">
+                    <a class="dropdown-item" href="#">Easy</a>
+                    <a class="dropdown-item" href="#">Medium</a>
+                    <a class="dropdown-item" href="#">Hard</a>
+                </div>
+            </div>
+            <div class="dropdown col-md-12 text-center">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="type" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Category
+                </button>
+                <div class="dropdown-menu" aria-labelledby="type">
+                    <a class="dropdown-item">General Knowledge</a>
+                    <a class="dropdown-item">Entertainment: Books</a>
+                    <a class="dropdown-item">Entertainment: Film</a>
+                    <a class="dropdown-item">Entertainment: Music</a>
+                    <a class="dropdown-item">Entertainment: Musicals &amp; Theatres</a>
+                    <a class="dropdown-item">Entertainment: Television</a>
+                    <a class="dropdown-item">Entertainment: Video Games</a>
+                    <a class="dropdown-item">Entertainment: Board Games</a>
+                    <a class="dropdown-item">Science &amp; Nature</a>
+                    <a class="dropdown-item">Science: Computers</a>
+                    <a class="dropdown-item">Science: Mathematics</a>
+                    <a class="dropdown-item">Mythology</a>
+                    <a class="dropdown-item">Sports</a>
+                    <a class="dropdown-item">Geography</a>
+                    <a class="dropdown-item">History</a>
+                    <a class="dropdown-item">Politics</a>
+                    <a class="dropdown-item">Art</a>
+                    <a class="dropdown-item">Celebrities</a>
+                    <a class="dropdown-item">Animals</a>
+                    <a class="dropdown-item">Vehicles</a>
+                    <a class="dropdown-item">Entertainment: Comics
+                        <a>
+                            <a class="dropdown-item">Science: Gadgets</a>
+                            <a class="dropdown-item">Entertainment: Japanese Anime &amp; Manga</a>
+                            <a class="dropdown-item">Entertainment: Cartoon &amp; Animations</a>
+                </div>
             </div>
         </div>
-        <div class="dropdown col-md-12 text-center">
-            <button class="btn btn-secondary dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true"
-                aria-expanded="false">
-                Category
-            </button>
-            <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
-                <a class="dropdown-item" >General Knowledge</a>
-                <a class="dropdown-item" >Entertainment: Books</a>
-                <a class="dropdown-item" >Entertainment: Film</a>
-                <a class="dropdown-item" >Entertainment: Music</a>
-                <a class="dropdown-item" >Entertainment: Musicals &amp; Theatres</a>
-                <a class="dropdown-item" >Entertainment: Television</a>
-                <a class="dropdown-item" >Entertainment: Video Games</a>
-                <a class="dropdown-item" >Entertainment: Board Games</a>
-                <a class="dropdown-item" >Science &amp; Nature</a>
-                <a class="dropdown-item" >Science: Computers</a>
-                <a class="dropdown-item" >Science: Mathematics</a>
-                <a class="dropdown-item" >Mythology</a>
-                <a class="dropdown-item" >Sports</a>
-                <a class="dropdown-item" >Geography</a>
-                <a class="dropdown-item" >History</a>
-                <a class="dropdown-item" >Politics</a>
-                <a class="dropdown-item" >Art</a>
-                <a class="dropdown-item" >Celebrities</a>
-                <a class="dropdown-item" >Animals</a>
-                <a class="dropdown-item" >Vehicles</a>
-                <a class="dropdown-item" >Entertainment: Comics<a>
-                <a class="dropdown-item" >Science: Gadgets</a>
-                <a class="dropdown-item" >Entertainment: Japanese Anime &amp; Manga</a>
-                <a class="dropdown-item" >Entertainment: Cartoon &amp; Animations</a>
+    </div>
+    <div class="container">
+        <div class="row mx-auto">
+            <div class="col-md-6 mx-auto" id="question-box">
+                 Questions box
             </div>
         </div>
     </div>
