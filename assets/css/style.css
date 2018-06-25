@@ -1,7 +1,7 @@
 body {
     background: url(../imgs/bg.jpg);
     background-size: cover;
-    background-repeat: no-repeat;
+    background-repeat: repeat-y;
 }
 
 header {
@@ -20,13 +20,18 @@ header h1 {
 }
 
 #options {
-    width: 300px;
+    width: 330px;
 }
 
 #options button {
     margin-top: 15px;
 }
 
-#type {
+#start {
     margin-bottom: 15px;
+}
+
+.dropdown:nth-child(3) .dropdown-menu {
+    height: 400px;
+    overflow-y: auto;
 }
