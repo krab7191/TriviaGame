@@ -1,0 +1,14 @@
+body {
+    background: url(../imgs/bg.jpg);
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+header {
+    background-color: antiquewhite;
+}
+header h1 {
+    padding: 15px;
+}
+#options {
+
+}
