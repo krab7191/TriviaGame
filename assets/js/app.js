@@ -13,15 +13,12 @@ var game = {
         this.optionDropdownHandlers();
     },
     optionDropdownHandlers: function () {
-        $(".diff").on("click", function (event) {
-            var text = event.target.innerText;    // Use vanilla JS to avoid pulling html entities, ie. &amp;
-            $("#diff").html(text);
-            game.difficulty = text;
-        });
-        $(".cat").on("click", function (event) {
-            var text = event.target.innerText;
-            $("#cat").html(text);
-            game.category = $(event.target).index() + 9; // API offsets options by 9 for some reason...
+        $(".dropdown-item").on("click", function () {
+            var text = $(this)[0].innerText;    // Use vanilla JS to avoid pulling html entities, ie. &amp;
+            console.log(text);
+            var but = $(this).prev("div");
+            console.log(but);
+
         });
     },
 
