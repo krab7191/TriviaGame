@@ -35,6 +35,7 @@ var game = {
     url: "",
     questions: [],
     curr: 0,
+    intervalId: null,
     changeOptions: function (target, text) {
         var buttonId = $(target.closest('.dropdown')).children("button").attr("id"); // Get button ID
         $("#" + buttonId).html(text); // Change button text
@@ -68,6 +69,22 @@ var game = {
         for (var i = 0; i < 4; i++) {
             $("#question-box").append("<br><div class='answer'>" + this.questions[this.curr][2][rand[i]] + "</div>"); // Append answers to page in random order
         }
+        $(".answer").on('click', function(event) {
+            chooseAnser(event.target);
+        });
+        this.timer();
+        game.curr++;
+    },
+    chooseAnser: function (target) {
+        // Start time and handle clicks
+        console.log(target);
+    },
+    timer: function () {
+        clearInterval(this.intervalId);
+        this.intervalId = setInterval(this.countdown, 1000);
+    },
+    countdown: function () {
+        console.log("Counting down");
     },
     optionRandomizer: function () { // Modified Fisher-Yates shuffle
         var currentIndex = 4, temporaryValue, randomIndex;
