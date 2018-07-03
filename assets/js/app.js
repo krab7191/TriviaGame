@@ -20,7 +20,8 @@ function resetHandler() {
 function startHandler() {
     console.log("Attaching start handler...");
     $("#start").on("click", function () {
-        game.init();
+        game.setup();
+        game.makeRequest();
     });
 }
 
@@ -31,12 +32,12 @@ var game = {
     category: "9",
     difficulty: "easy",
     type: "multiple",
-    url: this.apiRoot + "amount=" + this.amount + "&category=" + this.category + "&difficulty=" + this.difficulty + "&type=" + this.type,
+    url: "",
     questions: [],
     changeOptions: function (target, text) {
         var buttonId = $(target.closest('.dropdown')).children("button").attr("id"); // Get button ID
         $("#" + buttonId).html(text); // Change button text
-        if (text === ("Easy" || "Medium" || "Hard")) {
+        if (text === "Easy" || text === "Medium" || text === "Hard") {
             console.log("Changing " + buttonId + " to: " + text);
             this[buttonId] = text;      // Change difficulty property
         }
@@ -54,14 +55,38 @@ var game = {
     },
     init: function () {
         console.log("game.init()");
-
+        $("#question-box").html(JSON.stringify(this.questions));
     },
     reset: function () {
         console.log("game.reset()");
 
     },
+    setup: function () {
+        console.log("game.setup()");
+        var cat;
+        // Use vanilla JS to avoid grabbing button text whitespace (with .html())
+        if ($("#category")[0].innerText == "Category ") {
+            cat = "General Knowledge";
+        }
+        else {
+            cat = $("#category")[0].innerText;
+        }
+        $("#question-box").html("Getting " + this.difficulty + " questions for " + cat + "...");
+        game.questions = [];
+    },
     makeRequest: function () {
+        this.url = this.apiRoot + "amount=" + this.amount + "&category=" + this.category + "&difficulty=" + this.difficulty + "&type=" + this.type;
         console.log("Making ajax request...");
-
+        $.ajax({
+            url: game.url,
+            method: "GET"
+        }).then(function (response) {
+            var r = response.results;
+            for (var i = 0; i < r.length; i++) {
+                game.questions.push([r[i].question, r[i].correct_answer, r[i].incorrect_answers]);
+            }
+            console.log(questions);
+            game.init();
+        });
     }
 };
