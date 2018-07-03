@@ -34,12 +34,13 @@ var game = {
     type: "multiple",
     url: "",
     questions: [],
+    curr: 0,
     changeOptions: function (target, text) {
         var buttonId = $(target.closest('.dropdown')).children("button").attr("id"); // Get button ID
         $("#" + buttonId).html(text); // Change button text
         if (text === "Easy" || text === "Medium" || text === "Hard") {
             console.log("Changing " + buttonId + " to: " + text);
-            this[buttonId] = text;      // Change difficulty property
+            this[buttonId] = text.toLowerCase();      // Change difficulty property
         }
         else {  // Change category property
             var l = $(target).prev().length;
@@ -55,7 +56,34 @@ var game = {
     },
     init: function () {
         console.log("game.init()");
-        $("#question-box").html(JSON.stringify(this.questions));
+        var cat = $("#category")[0].innerText;
+        if (cat == "Category ") {
+            $("#question-box").html("General Knowledge: " + this.difficulty);
+        }
+        else {
+            $("#question-box").html(cat + ": " + this.difficulty);
+        }
+        $("#question-box").append("<br><br>" + game.questions[game.curr][0] + "<br>");
+        var rand = this.optionRandomizer();
+        for (var i = 0; i < 4; i++) {
+            $("#question-box").append("<br><div>" + this.questions[this.curr][2][rand[i]] + "</div>");
+        }
+    },
+    optionRandomizer: function () { // Modified Fisher-Yates shuffle
+        var currentIndex = 4, temporaryValue, randomIndex;
+        var arr = [0, 1, 2, 3];
+        // While there remain elements to shuffle...
+        while (0 !== currentIndex) {
+            // Pick a remaining element...
+            randomIndex = Math.floor(Math.random() * currentIndex);
+            currentIndex -= 1;
+
+            // And swap it with the current element.
+            temporaryValue = arr[currentIndex];
+            arr[currentIndex] = arr[randomIndex];
+            arr[randomIndex] = temporaryValue;
+        }
+        return arr;
     },
     reset: function () {
         console.log("game.reset()");
@@ -75,17 +103,20 @@ var game = {
         game.questions = [];
     },
     makeRequest: function () {
-        this.url = this.apiRoot + "amount=" + this.amount + "&category=" + this.category + "&difficulty=" + this.difficulty + "&type=" + this.type;
-        console.log("Making ajax request...");
+        game.url = this.apiRoot + "amount=" + this.amount + "&category=" + this.category + "&difficulty=" + this.difficulty + "&type=" + this.type;
+        console.log("Making ajax request to: " + game.url);
         $.ajax({
             url: game.url,
             method: "GET"
         }).then(function (response) {
             var r = response.results;
             for (var i = 0; i < r.length; i++) {
-                game.questions.push([r[i].question, r[i].correct_answer, r[i].incorrect_answers]);
+                game.questions[i] = [r[i].question, r[i].correct_answer, r[i].incorrect_answers];
+                game.questions[i][2].push(game.questions[i][1]);
             }
             game.init();
+        }, function () {
+            alert("You need an internet connection to play!");
         });
     }
 };
