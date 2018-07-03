@@ -34,8 +34,10 @@ var game = {
     type: "multiple",
     url: "",
     questions: [],
-    curr: 0,
+    currQuestion: 0,
+    timerCount: 10,
     intervalId: null,
+    score: 0,
     changeOptions: function (target, text) {
         var buttonId = $(target.closest('.dropdown')).children("button").attr("id"); // Get button ID
         $("#" + buttonId).html(text); // Change button text
@@ -56,35 +58,68 @@ var game = {
         }
     },
     init: function () {
-        console.log("game.init()");
-        var cat = $("#category")[0].innerText;
-        if (cat == "Category ") {
-            $("#question-box").html("General Knowledge: " + this.difficulty);
+        if (game.currQuestion == 10) {
+            $("#question-box").html("Game over! Score: " + this.score + "/10");
         }
         else {
-            $("#question-box").html(cat + ": " + this.difficulty);
+            console.log("game.init()");
+            var cat = $("#category")[0].innerText;
+            if (cat == "Category ") {
+                $("#question-box").html("General Knowledge: " + this.difficulty);
+            }
+            else {
+                $("#question-box").html(cat + ": " + this.difficulty);
+            }
+            $("#question-box").append("<br><br>" + game.questions[game.currQuestion][0] + "<br>");
+            var rand = this.optionRandomizer();
+            for (var i = 0; i < 4; i++) {
+                $("#question-box").append("<br><div class='answer'>" + this.questions[this.currQuestion][2][rand[i]] + "</div>"); // Append answers to page in random order
+            }
+            $("#question-box").append("<br><div id='timer'></div>");
+            $(".answer").on('click', function (event) {
+                game.chooseAnswer(event.target);
+            });
+            this.timer();
         }
-        $("#question-box").append("<br><br>" + game.questions[game.curr][0] + "<br>");
-        var rand = this.optionRandomizer();
-        for (var i = 0; i < 4; i++) {
-            $("#question-box").append("<br><div class='answer'>" + this.questions[this.curr][2][rand[i]] + "</div>"); // Append answers to page in random order
-        }
-        $(".answer").on('click', function(event) {
-            chooseAnser(event.target);
-        });
-        this.timer();
-        game.curr++;
     },
-    chooseAnser: function (target) {
+    chooseAnswer: function (target) {
+        $(".answer").off("click");
         // Start time and handle clicks
-        console.log(target);
+        var answer = $(target).html();
+        if (answer === game.questions[game.currQuestion][1]) {
+            console.log("Correct!");
+            $(target).css("background-color", "green");
+            clearInterval(this.intervalId);
+            game.timerCount = 10;
+            this.score++;
+        }
+        else {
+            $(target).css("background-color", "red");
+            game.timerCount = 10;
+            console.log("Incorrect!");
+            clearInterval(this.intervalId);
+        }
+        game.currQuestion++;
+        setTimeout(function () {
+            game.init();
+        }, 2000);
     },
     timer: function () {
         clearInterval(this.intervalId);
-        this.intervalId = setInterval(this.countdown, 1000);
+        this.intervalId = setInterval(this.countdown, 1000, 3);
     },
-    countdown: function () {
-        console.log("Counting down");
+    countdown: function (id) {
+        console.log("Counting down " + game.timerCount);
+        $("#timer").html(game.timerCount);
+        game.timerCount--;
+        if (game.timerCount == 0) {
+            clearInterval(game.intervalId);
+            console.log("Out of time!");
+            game.timerCount = 10;
+            setTimeout(function () {
+                game.init();
+            }, 2000);
+        }
     },
     optionRandomizer: function () { // Modified Fisher-Yates shuffle
         var currentIndex = 4, temporaryValue, randomIndex;
