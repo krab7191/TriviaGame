@@ -6,9 +6,9 @@ $(function () {
 function optionDropdownHandlers() {
     console.log("Attaching dropdown handlers...");
     $(".dropdown-item").on("click", function (event) {
-        var $button = $(event.target).closest(".dropdown").children('button');
-        var text = event.target.innerText;    // Use vanilla JS to avoid pulling html entities, ie. &amp;
-        game.changeOptions($button.attr("id"), text);
+        var target = event.target;
+        var text = target.innerText;    // Use vanilla JS to avoid pulling html entities, ie. &amp;
+        game.changeOptions(target, text);
     });
 }
 function resetHandler() {
@@ -33,10 +33,24 @@ var game = {
     type: "multiple",
     url: this.apiRoot + "amount=" + this.amount + "&category=" + this.category + "&difficulty=" + this.difficulty + "&type=" + this.type,
     questions: [],
-    changeOptions: function (buttonId, text) {
-        console.log("Changing " + buttonId + " to: " + text);
-        $("#"+buttonId).html(text); // Change button text
-        this[buttonId] = text;      // Change game option properties
+    changeOptions: function (target, text) {
+        var buttonId = $(target.closest('.dropdown')).children("button").attr("id"); // Get button ID
+        $("#" + buttonId).html(text); // Change button text
+        if (text === ("Easy" || "Medium" || "Hard")) {
+            console.log("Changing " + buttonId + " to: " + text);
+            this[buttonId] = text;      // Change difficulty property
+        }
+        else {  // Change category property
+            var l = $(target).prev().length;
+            var i = 0;
+            while ((l = $(target).prev().length) != 0)  // Which child is it?
+            {
+                target = $(target).prev();
+                i++;
+            }
+            this.category = i + 9;  // Set category to numerical for API call
+            console.log("Changing category to: " + this.category + " (" + text + ")");
+        }
     },
     init: function () {
         console.log("game.init()");
