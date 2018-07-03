@@ -66,12 +66,12 @@ var game = {
         $("#question-box").append("<br><br>" + game.questions[game.curr][0] + "<br>");
         var rand = this.optionRandomizer();
         for (var i = 0; i < 4; i++) {
-            $("#question-box").append("<br><div>" + this.questions[this.curr][2][rand[i]] + "</div>");
+            $("#question-box").append("<br><div class='answer'>" + this.questions[this.curr][2][rand[i]] + "</div>"); // Append answers to page in random order
         }
     },
     optionRandomizer: function () { // Modified Fisher-Yates shuffle
         var currentIndex = 4, temporaryValue, randomIndex;
-        var arr = [0, 1, 2, 3];
+        var arr = [0, 1, 2, 3];  // Always 4 possible answers
         // While there remain elements to shuffle...
         while (0 !== currentIndex) {
             // Pick a remaining element...

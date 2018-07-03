@@ -35,3 +35,7 @@ header h1 {
     height: 400px;
     overflow-y: auto;
 }
+.answer:hover {
+    cursor: pointer;
+    background: #888;
+}
