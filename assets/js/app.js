@@ -60,6 +60,7 @@ var game = {
     init: function () {
         if (game.currQuestion == 10) {
             $("#question-box").html("Game over! Score: " + this.score + "/10");
+            game.reset();
         }
         else {
             console.log("game.init()");
@@ -139,7 +140,10 @@ var game = {
     },
     reset: function () {
         console.log("game.reset()");
-
+        game.currQuestion = 0;
+        game.timerCount = 10;
+        game.intervalId = null;
+        game.score = 0;
     },
     setup: function () {
         console.log("game.setup()");
