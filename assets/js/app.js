@@ -85,7 +85,6 @@ var game = {
             for (var i = 0; i < r.length; i++) {
                 game.questions.push([r[i].question, r[i].correct_answer, r[i].incorrect_answers]);
             }
-            console.log(questions);
             game.init();
         });
     }
