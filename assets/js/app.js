@@ -198,15 +198,11 @@ var game = {
         }).then(function (response) {
             if (response.response_code != 0) {
                 if (response.response_code == 4) {
-                    alert("No new questions in this category! Reseting your token");
+                    alert("No new questions in this category! Reseting your access token");
                     $.get({
                         url: 'https://opentdb.com/api_token.php?command=reset&token=' + localStorage.getItem("token")
                     }).then(function (response) {
                         console.log(response);
-                        localStorage.token = response.token;
-                        localStorage.tokenTime = new Date().getTime();
-                        game.token = response.token;
-                        game.reset();
                     }, function () {
                         // Get some internet connexxion
                     });
