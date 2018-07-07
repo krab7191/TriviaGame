@@ -54,6 +54,7 @@ var game = {
         }
     },
     init: function () {
+        $("#timer-box").html("");
         if (game.currQuestion == 10) {
             $("#question-box").html("Game over! Score: " + game.score + "/10");
         }
@@ -70,7 +71,7 @@ var game = {
             for (var i = 0; i < 4; i++) {
                 $("#question-box").append("<br><div class='answer'>" + game.questions[game.currQuestion][2][rand[i]] + "</div>"); // Append answers to page in random order
             }
-            $("#question-box").append("<br><div id='timer'></div>");
+            $("#timer-box").append("<div id='timer'>Time remaining: 10</div>");
             $(".answer").on('click', function (event) {
                 // Prevent clicking multiple choices
                 $(".answer").off("click");
@@ -88,13 +89,14 @@ var game = {
             game.score++;
         }
         else {
+            $(".answer:contains(" + game.questions[game.currQuestion][1] +")").css("background-color", "green");
             $(target).css("background-color", "red");
             game.timerCount = 10;
         }
         game.currQuestion++;
         setTimeout(function () {
             game.init();
-        }, 1000);
+        }, 2000);
     },
     timer: function () {
         clearInterval(game.intervalId);
@@ -102,7 +104,10 @@ var game = {
     },
     countdown: function () {
         game.timerCount--;
-        $("#timer").html(game.timerCount);
+        if (game.timerCount < 4) {
+            $("#timer").css("color", "red");
+        }
+        $("#timer").html("Time remaining: " + game.timerCount);
         // game.timerCount--;
         if (game.timerCount == 0) {
             clearInterval(game.intervalId);
@@ -110,7 +115,7 @@ var game = {
             game.currQuestion++;
             setTimeout(function () {
                 game.init();
-            }, 1000);
+            }, 2000);
         }
     },
     optionRandomizer: function () {                       // Modified Fisher-Yates shuffle
@@ -132,6 +137,7 @@ var game = {
     reset: function () {
         clearInterval(game.intervalId);
         $("#question-box").html("");
+        $("#timer-box").html("");
         game.currQuestion = 0;
         game.timerCount = 10;
         game.intervalId = null;
