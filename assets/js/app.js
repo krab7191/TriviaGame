@@ -1,7 +1,6 @@
 
 // Document ready
 $(function () {
-    console.log("Page loaded");
     //Attach click handlers
     optionDropdownHandlers();
     startHandler();
@@ -59,7 +58,6 @@ var game = {
             $("#question-box").html("Game over! Score: " + game.score + "/10");
         }
         else {
-            console.log("new question");
             var cat = $("#category")[0].innerText;
             if (cat == "Category ") {
                 $("#question-box").html("General Knowledge: " + game.difficulty);
@@ -74,28 +72,24 @@ var game = {
             }
             $("#question-box").append("<br><div id='timer'></div>");
             $(".answer").on('click', function (event) {
+                // Prevent clicking multiple choices
+                $(".answer").off("click");
                 game.chooseAnswer(event.target);
             });
             game.timer();
         }
     },
     chooseAnswer: function (target) {
-        // Prevent clicking multiple choices
-        $(".answer").off("click");
-        // Start time and handle clicks
+        clearInterval(game.intervalId);
+        game.timerCount = 10;
         var answer = $(target).html();
         if (answer === game.questions[game.currQuestion][1]) {
-            console.log("Correct!");
             $(target).css("background-color", "green");
-            clearInterval(game.intervalId);
-            game.timerCount = 10;
             game.score++;
         }
         else {
             $(target).css("background-color", "red");
             game.timerCount = 10;
-            console.log("Incorrect!");
-            clearInterval(game.intervalId);
         }
         game.currQuestion++;
         setTimeout(function () {
@@ -107,13 +101,11 @@ var game = {
         game.intervalId = setInterval(game.countdown, 1000);
     },
     countdown: function () {
-        console.log("Counting down " + game.timerCount);
         game.timerCount--;
         $("#timer").html(game.timerCount);
         // game.timerCount--;
         if (game.timerCount == 0) {
             clearInterval(game.intervalId);
-            console.log("Out of time!");
             game.timerCount = 10;
             game.currQuestion++;
             setTimeout(function () {
@@ -139,7 +131,6 @@ var game = {
     },
     reset: function () {
         clearInterval(game.intervalId);
-        console.log("resetting game object and play area)");
         $("#question-box").html("");
         game.currQuestion = 0;
         game.timerCount = 10;
@@ -149,7 +140,6 @@ var game = {
         game.questions.length = 0;
     },
     setup: function () {      // Tell user what the category and difficulty is
-        console.log("Set up play area");
         var cat;
         // Use vanilla JS to avoid grabbing button text whitespace (as with .html())
         if ($("#category")[0].innerText == "Category ") {
