@@ -1,10 +1,41 @@
 
 // Document ready
 $(function () {
+    handleSession();
     //Attach click handlers
     optionDropdownHandlers();
     startHandler();
 });
+
+function handleSession() {
+    if (typeof (Storage) !== "undefined") {
+        if (localStorage.getItem("token") != null) {
+            if (localStorage.getItem("tokenTime") + 21600000000 < new Date().getTime()) {
+                // 6 hours passed, get new token
+                getToken();
+            }
+            // Use session storage
+            game.token = localStorage.getItem('token');
+        }
+        else {
+            // Get and store token
+            getToken();
+        }
+    }
+}
+
+function getToken() {
+    $.get({
+        url: 'https://opentdb.com/api_token.php?command=request'
+    }).then(function (response) {
+        console.log(response);
+        localStorage.token = response.token;
+        localStorage.tokenTime = new Date().getTime();
+        game.token = response.token;
+    }, function () {
+        // Get some internet connexxion
+    });
+}
 
 // Handle user change difficulty and trivia category
 function optionDropdownHandlers() {
@@ -35,6 +66,7 @@ var game = {
     currQuestion: 0,
     timerCount: 10,
     intervalId: null,
+    token: "",        // API session token
     score: 0,
     changeOptions: function (target, text) {
         var buttonId = $(target.closest('.dropdown')).children("button").attr("id"); // Get button ID
@@ -56,6 +88,7 @@ var game = {
     init: function () {
         $("#timer-box").html("");
         if (game.currQuestion == 10) {
+            $("#timer-box").css("visibility", "hidden");
             $("#question-box").html("Game over! Score: " + game.score + "/10");
         }
         else {
@@ -77,6 +110,7 @@ var game = {
                 $(".answer").off("click");
                 game.chooseAnswer(event.target);
             });
+            $("#timer-box").css("visibility", "visible");
             game.timer();
         }
     },
@@ -89,7 +123,7 @@ var game = {
             game.score++;
         }
         else {
-            $(".answer:contains(" + game.questions[game.currQuestion][1] +")").css("background-color", "green");
+            $(".answer:contains(" + game.questions[game.currQuestion][1] + ")").css("background-color", "green");
             $(target).css("background-color", "red");
             game.timerCount = 10;
         }
@@ -137,7 +171,7 @@ var game = {
     reset: function () {
         clearInterval(game.intervalId);
         $("#question-box").html("");
-        $("#timer-box").html("");
+        $("#timer-box").html("").css("visibility", "hidden");
         game.currQuestion = 0;
         game.timerCount = 10;
         game.intervalId = null;
@@ -158,18 +192,40 @@ var game = {
         game.questions.length = 0;  // Erase question array
     },
     makeRequest: function () {
-        game.url = game.apiRoot + "amount=" + game.amount + "&category=" + game.category + "&difficulty=" + game.difficulty + "&type=" + game.type;
+        game.url = game.apiRoot + "amount=" + game.amount + "&category=" + game.category + "&difficulty=" + game.difficulty + "&type=" + game.type + "&token=" + game.token;
         $.get({
             url: game.url
         }).then(function (response) {
-            var r = response.results;
-            for (var i = 0; i < r.length; i++) {
-                // Construct local question array
-                game.questions[i] = [r[i].question, r[i].correct_answer, r[i].incorrect_answers];
-                // Push correct answer in with false options for ease of display
-                game.questions[i][2].push(game.questions[i][1]);
+            if (response.response_code != 0) {
+                if (response.response_code == 4) {
+                    alert("No new questions in this category! Reseting your token");
+                    $.get({
+                        url: 'https://opentdb.com/api_token.php?command=reset&token=' + localStorage.getItem("token")
+                    }).then(function (response) {
+                        console.log(response);
+                        localStorage.token = response.token;
+                        localStorage.tokenTime = new Date().getTime();
+                        game.token = response.token;
+                        game.reset();
+                    }, function () {
+                        // Get some internet connexxion
+                    });
+                }
+                if (response.response_code == 3) {
+                    getToken();
+                }
             }
-            game.init();
+            else {
+                console.log(response);
+                var r = response.results;
+                for (var i = 0; i < r.length; i++) {
+                    // Construct local question array
+                    game.questions[i] = [r[i].question, r[i].correct_answer, r[i].incorrect_answers];
+                    // Push correct answer in with false options for ease of display
+                    game.questions[i][2].push(game.questions[i][1]);
+                }
+                game.init();
+            }
         }, function () {
             alert("You need an internet connection to play!");
         });

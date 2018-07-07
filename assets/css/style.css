@@ -2,39 +2,56 @@ body {
     background: url(../imgs/bg.jpg);
     background-size: cover;
     background-repeat: repeat-y;
+    color: white;
 }
 
 header {
-    background-color: antiquewhite;
+    background-color: #003B3E;
 }
 
 header h1 {
-    padding: 15px 0;
+    padding: 8px 0;
 }
 
 #options, #question-box, #timer-box {
-    border: 2px solid #444;
-    background-color: #999;
-    border-radius: 15px;
-    margin-bottom: 15px;
+    border: 2px solid #551C4E;
+    background-color: #4D1D15;
+    border-radius: 10px;
+    margin-bottom: 12px;
+}
+
+#timer-box {
+    color: green;
+    visibility: hidden;
+}
+
+#question-box {
+    padding: 8px;
+}
+
+#question-box div {
+    padding-left: 10px;
+    border-radius: 3px;
 }
 
 #options {
     width: 370px;
 }
 
+.dropdown-item {
+    color: #003B3E;
+}
+
 #options button {
-    margin-top: 15px;
+    margin-top: 12px;
+    background-color: #003B3E;
+    color: white;
 }
 
 #start {
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
-.dropdown:nth-child(3) .dropdown-menu {
-    height: 400px;
-    overflow-y: auto;
-}
 .answer:hover {
     cursor: pointer;
     background: #888;
