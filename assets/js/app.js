@@ -1,39 +1,38 @@
+
+// Document ready
 $(function () {
+    console.log("Page loaded");
+    //Attach click handlers
     optionDropdownHandlers();
-    resetHandler();
     startHandler();
 });
+
+// Handle user change difficulty and trivia category
 function optionDropdownHandlers() {
-    console.log("Attaching dropdown handlers...");
     $(".dropdown-item").on("click", function (event) {
         var target = event.target;
         var text = target.innerText;    // Use vanilla JS to avoid pulling html entities, ie. &amp;
         game.changeOptions(target, text);
     });
 }
-function resetHandler() {
-    console.log("Attaching reset handler...");
-    $("#reset").on("click", function () {
-        game.reset();
-    });
-}
+// Attach click handler to begin quiz
 function startHandler() {
-    console.log("Attaching start handler...");
     $("#start").on("click", function () {
+        game.reset();
         game.setup();
         game.makeRequest();
     });
 }
 
+// Game object
 var game = {
-    // https://opentdb.com/api.php?amount=10&category=9&difficulty=easy&type=multiple
     apiRoot: "https://opentdb.com/api.php?",
     amount: "10",
-    category: "9",
+    category: 9,      // API handles categories as numbers increasing from 9
     difficulty: "easy",
-    type: "multiple",
+    type: "multiple",   // Add support for different quiz type later
     url: "",
-    questions: [],
+    questions: [],      // Object to hold questions for current game
     currQuestion: 0,
     timerCount: 10,
     intervalId: null,
@@ -42,89 +41,89 @@ var game = {
         var buttonId = $(target.closest('.dropdown')).children("button").attr("id"); // Get button ID
         $("#" + buttonId).html(text); // Change button text
         if (text === "Easy" || text === "Medium" || text === "Hard") {
-            console.log("Changing " + buttonId + " to: " + text);
-            this[buttonId] = text.toLowerCase();      // Change difficulty property
+            game[buttonId] = text.toLowerCase();      // Change difficulty property, (API needs lower case)
         }
         else {  // Change category property
-            var l = $(target).prev().length;
+            var length = $(target).prev().length;
             var i = 0;
             while ((l = $(target).prev().length) != 0)  // Which child is it?
             {
                 target = $(target).prev();
                 i++;
             }
-            this.category = i + 9;  // Set category to numerical for API call
-            console.log("Changing category to: " + this.category + " (" + text + ")");
+            game.category = i + 9;  // API categories start at 9...
         }
     },
     init: function () {
         if (game.currQuestion == 10) {
-            $("#question-box").html("Game over! Score: " + this.score + "/10");
-            game.reset();
+            $("#question-box").html("Game over! Score: " + game.score + "/10");
         }
         else {
-            console.log("game.init()");
+            console.log("new question");
             var cat = $("#category")[0].innerText;
             if (cat == "Category ") {
-                $("#question-box").html("General Knowledge: " + this.difficulty);
+                $("#question-box").html("General Knowledge: " + game.difficulty);
             }
             else {
-                $("#question-box").html(cat + ": " + this.difficulty);
+                $("#question-box").html(cat + ": " + game.difficulty);
             }
             $("#question-box").append("<br><br>" + game.questions[game.currQuestion][0] + "<br>");
-            var rand = this.optionRandomizer();
+            var rand = game.optionRandomizer();
             for (var i = 0; i < 4; i++) {
-                $("#question-box").append("<br><div class='answer'>" + this.questions[this.currQuestion][2][rand[i]] + "</div>"); // Append answers to page in random order
+                $("#question-box").append("<br><div class='answer'>" + game.questions[game.currQuestion][2][rand[i]] + "</div>"); // Append answers to page in random order
             }
             $("#question-box").append("<br><div id='timer'></div>");
             $(".answer").on('click', function (event) {
                 game.chooseAnswer(event.target);
             });
-            this.timer();
+            game.timer();
         }
     },
     chooseAnswer: function (target) {
+        // Prevent clicking multiple choices
         $(".answer").off("click");
         // Start time and handle clicks
         var answer = $(target).html();
         if (answer === game.questions[game.currQuestion][1]) {
             console.log("Correct!");
             $(target).css("background-color", "green");
-            clearInterval(this.intervalId);
+            clearInterval(game.intervalId);
             game.timerCount = 10;
-            this.score++;
+            game.score++;
         }
         else {
             $(target).css("background-color", "red");
             game.timerCount = 10;
             console.log("Incorrect!");
-            clearInterval(this.intervalId);
+            clearInterval(game.intervalId);
         }
         game.currQuestion++;
         setTimeout(function () {
             game.init();
-        }, 2000);
+        }, 1000);
     },
     timer: function () {
-        clearInterval(this.intervalId);
-        this.intervalId = setInterval(this.countdown, 1000, 3);
+        clearInterval(game.intervalId);
+        game.intervalId = setInterval(game.countdown, 1000);
     },
-    countdown: function (id) {
+    countdown: function () {
         console.log("Counting down " + game.timerCount);
-        $("#timer").html(game.timerCount);
         game.timerCount--;
+        $("#timer").html(game.timerCount);
+        // game.timerCount--;
         if (game.timerCount == 0) {
             clearInterval(game.intervalId);
             console.log("Out of time!");
             game.timerCount = 10;
+            game.currQuestion++;
             setTimeout(function () {
                 game.init();
-            }, 2000);
+            }, 1000);
         }
     },
-    optionRandomizer: function () { // Modified Fisher-Yates shuffle
+    optionRandomizer: function () {                       // Modified Fisher-Yates shuffle
         var currentIndex = 4, temporaryValue, randomIndex;
-        var arr = [0, 1, 2, 3];  // Always 4 possible answers
+        var arr = [0, 1, 2, 3];  // Always 4 possible answers (From API)
         // While there remain elements to shuffle...
         while (0 !== currentIndex) {
             // Pick a remaining element...
@@ -139,35 +138,39 @@ var game = {
         return arr;
     },
     reset: function () {
-        console.log("game.reset()");
+        clearInterval(game.intervalId);
+        console.log("resetting game object and play area)");
+        $("#question-box").html("");
         game.currQuestion = 0;
         game.timerCount = 10;
         game.intervalId = null;
         game.score = 0;
+        game.url = "";
+        game.questions.length = 0;
     },
-    setup: function () {
-        console.log("game.setup()");
+    setup: function () {      // Tell user what the category and difficulty is
+        console.log("Set up play area");
         var cat;
-        // Use vanilla JS to avoid grabbing button text whitespace (with .html())
+        // Use vanilla JS to avoid grabbing button text whitespace (as with .html())
         if ($("#category")[0].innerText == "Category ") {
             cat = "General Knowledge";
         }
         else {
             cat = $("#category")[0].innerText;
         }
-        $("#question-box").html("Getting " + this.difficulty + " questions for " + cat + "...");
-        game.questions = [];
+        $("#question-box").html("Getting " + game.difficulty + " questions for " + cat + "...");
+        game.questions.length = 0;  // Erase question array
     },
     makeRequest: function () {
-        game.url = this.apiRoot + "amount=" + this.amount + "&category=" + this.category + "&difficulty=" + this.difficulty + "&type=" + this.type;
-        console.log("Making ajax request to: " + game.url);
-        $.ajax({
-            url: game.url,
-            method: "GET"
+        game.url = game.apiRoot + "amount=" + game.amount + "&category=" + game.category + "&difficulty=" + game.difficulty + "&type=" + game.type;
+        $.get({
+            url: game.url
         }).then(function (response) {
             var r = response.results;
             for (var i = 0; i < r.length; i++) {
+                // Construct local question array
                 game.questions[i] = [r[i].question, r[i].correct_answer, r[i].incorrect_answers];
+                // Push correct answer in with false options for ease of display
                 game.questions[i][2].push(game.questions[i][1]);
             }
             game.init();
