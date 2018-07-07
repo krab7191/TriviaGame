@@ -198,14 +198,16 @@ var game = {
         }).then(function (response) {
             if (response.response_code != 0) {
                 if (response.response_code == 4) {
-                    alert("No new questions in this category! Reseting your access token");
-                    $.get({
-                        url: 'https://opentdb.com/api_token.php?command=reset&token=' + localStorage.getItem("token")
-                    }).then(function (response) {
-                        console.log(response);
-                    }, function () {
-                        // Get some internet connexxion
-                    });
+                    var re = confirm("No new questions in this category! Choose a different one or ok to reset your access token");
+                    if (re) {
+                        $.get({
+                            url: 'https://opentdb.com/api_token.php?command=reset&token=' + localStorage.getItem("token")
+                        }).then(function (response) {
+                            console.log(response);
+                        }, function () {
+                            // Get some internet connexxion
+                        });
+                    }
                 }
                 if (response.response_code == 3) {
                     getToken();
